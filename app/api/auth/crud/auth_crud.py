@@ -1,8 +1,4 @@
-from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.api.auth.schemas.create import EmailRequest, UserCreate, UserLogin
-from app.api.auth.schemas.response import TokenResponse, MessageResponse
-from util.context_utils import get_user_by_first_name
 from util.service_utils import hash_password
 from model.models import UserEmail, User
 from sqlalchemy import select
