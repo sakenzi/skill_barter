@@ -92,5 +92,5 @@ async def bll_user_login(req: UserLogin, db: AsyncSession) -> TokenResponse:
     if not verify_password(req.password, user.password):
         raise HTTPException(401, detail="Invalid email or password")
 
-    token, expire_time = await create_access_token({"sub": user.id})
+    token, expire_time = create_access_token({"sub": user.id})
     return TokenResponse(access_token=token, access_token_expire_time=expire_time)
