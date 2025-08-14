@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, String, Integer, DateTime, Column, ForeignKey, Text
+from sqlalchemy import Boolean, String, Integer, DateTime, Column, ForeignKey, Text, Index, UniqueConstraint
 from datetime import datetime
 from sqlalchemy.orm import relationship
 from db.database import Base
@@ -12,6 +12,11 @@ class UserEmail(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     users = relationship("User", back_populates="user_email")
+
+    __table_args__ = (
+        UniqueConstraint('email', name='uq_user_emails_email'),
+        Index('ix_user_emails_code', 'code'),
+    )
 
 
 class User(Base):
