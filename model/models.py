@@ -9,6 +9,7 @@ class UserEmail(Base):
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, nullable=False)
     code = Column(Integer, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
     users = relationship("User", back_populates="user_email")
 
@@ -21,9 +22,9 @@ class User(Base):
     last_name = Column(String(100), nullable=False)
     surname = Column(String(100), nullable=True, default="")
     phone_number = Column(String(20), nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    password = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
-    user_email = Column(Integer, ForeignKey("user_emails.id", ondelete="CASCADE"), nullable=False)
+    user_email_id = Column(Integer, ForeignKey("user_emails.id", ondelete="CASCADE"), nullable=False)
 
     user_email = relationship("UserEmail", back_populates="users")
