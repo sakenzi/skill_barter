@@ -20,7 +20,7 @@ class SubCategoryResponse(BaseModel):
 
 class SubSubCategoryResponse(BaseModel):
     id: int
-    sub_subcategoty_name: Optional[str]
+    sub_subcategory_name: Optional[str]
 
     class Config:
         from_attributes=True

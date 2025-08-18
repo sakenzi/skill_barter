@@ -52,7 +52,7 @@ class ProductPhoto(Base):
 class ProductCategory(Base):
     __tablename__ = "product_categories"
     id = Column(Integer, primary_key=True)
-    name = Column(String, unique=True, index=True)
+    category_name = Column(String, unique=True, index=True)
 
     subcategories = relationship("ProductSubCategory", back_populates="category")
 
@@ -60,7 +60,7 @@ class ProductCategory(Base):
 class ProductSubCategory(Base):
     __tablename__ = "product_subcategories"
     id = Column(Integer, primary_key=True)
-    name = Column(String, index=True)
+    subcategory_name = Column(String, index=True)
     category_id = Column(Integer, ForeignKey("product_categories.id"))
 
     category = relationship("ProductCategory", back_populates="subcategories")
@@ -70,7 +70,7 @@ class ProductSubCategory(Base):
 class ProductSubSubCategory(Base):
     __tablename__ = "product_subsubcategories"
     id = Column(Integer, primary_key=True)
-    name = Column(String, index=True)
+    sub_subcategory_name = Column(String, index=True)
     subcategory_id = Column(Integer, ForeignKey("product_subcategories.id"))
 
     subcategory = relationship("ProductSubCategory", back_populates="subsubcategories")
