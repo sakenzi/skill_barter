@@ -51,34 +51,29 @@ class ProductPhoto(Base):
 
 class ProductCategory(Base):
     __tablename__ = "product_categories"
+    id = Column(Integer, primary_key=True)
+    name = Column(String, unique=True, index=True)
 
-    id = Column(Integer, primary_key=True, index=True)
-    category_name = Column(String, nullable=False)
-
-    product_subcategoies = relationship("ProductSubCategory", back_populates="product_category")
+    subcategories = relationship("ProductSubCategory", back_populates="category")
 
 
 class ProductSubCategory(Base):
     __tablename__ = "product_subcategories"
+    id = Column(Integer, primary_key=True)
+    name = Column(String, index=True)
+    category_id = Column(Integer, ForeignKey("product_categories.id"))
 
-    id = Column(Integer, primary_key=True, index=True)
-    subcategory_name = Column(String, nullable=False)
-
-    product_category_id = Column(Integer, ForeignKey("product_categories.id", ondelete="CASCADE"), nullable=False)
-
-    product_category = relationship("ProductCategory", back_populates="product_subcategories")
-    product_sub_subcategories = relationship("ProductSubSubCategory", back_populates="product_subcategory")
+    category = relationship("ProductCategory", back_populates="subcategories")
+    subsubcategories = relationship("ProductSubSubCategory", back_populates="subcategory")
 
 
 class ProductSubSubCategory(Base):
-    __tablename__ = "product_sub_subcategories"
+    __tablename__ = "product_subsubcategories"
+    id = Column(Integer, primary_key=True)
+    name = Column(String, index=True)
+    subcategory_id = Column(Integer, ForeignKey("product_subcategories.id"))
 
-    id = Column(Integer, primary_key=True, index=True)
-    sub_subcategory_name = Column(String, nullable=False)
-
-    product_subcategory_id = Column(Integer, ForeignKey("product_subcategories.id", ondelete="CASCADE"), nullable=False)
-
-    product_subcategory = relationship("ProductSubCategory", back_populates="product_sub_subcategories")
+    subcategory = relationship("ProductSubCategory", back_populates="subsubcategories")
 
 
 # class Product(Base):
@@ -86,3 +81,4 @@ class ProductSubSubCategory(Base):
 
 #     id = Column(Integer, primary_key=True, index=True)
 #     product_name = Column(String, nullable=False)
+
