@@ -47,3 +47,10 @@ async def dal_get_products_by_user(user_id: int, db: AsyncSession) -> list[Produ
     res = await db.execute(
         select(Product).where(Product.user_id == user_id))
     return res.scalars().all()
+
+
+async def dal_get_products(db: AsyncSession) -> list[Product]:
+    res = await db.execute(
+        select(Product)
+    )
+    return res.scalars().all()

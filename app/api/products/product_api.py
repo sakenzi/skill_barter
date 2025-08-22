@@ -26,3 +26,12 @@ async def create_product(product: CreateProduct, user_id: int = Depends(get_curr
 )
 async def get_products_by_user(user_id: int = Depends(get_current_user_id), db: AsyncSession = Depends(get_db)):
     return await product_command.bll_get_products_by_user(user_id, db)
+
+
+@router.get(
+    "/products",
+    summary="Get all products",
+    response_model=list[ProductResponse]
+)
+async def get_products(db: AsyncSession = Depends(get_db)):
+    return await product_command.bll_get_products(db)
