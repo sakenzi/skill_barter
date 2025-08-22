@@ -1,10 +1,14 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from model.models import Product, ProductSubSubCategory, TypeProduct, User
+from model.models import Product, ProductSubSubCategory, TypeProduct, User, Photo, ProductPhoto
 from sqlalchemy import select
 from datetime import datetime
+from typing import List
+from fastapi import UploadFile
+import os
+import uuid
 
 
-async def dal_create_product(product_data: dict, db: AsyncSession) -> Product:
+async def dal_create_product(product_data: dict, photos: List[UploadFile], db: AsyncSession) -> Product:
     new_product = Product(
         product_name=product_data["product_name"],
         description=product_data["description"],
@@ -19,6 +23,32 @@ async def dal_create_product(product_data: dict, db: AsyncSession) -> Product:
     db.add(new_product)
     await db.commit()
     await db.refresh(new_product)
+
+    upload_dir = "uploads"
+    os.makedirs(upload_dir, exist_ok=True)
+
+    for photo_file in photos:
+        file_extension = photo_file.filename.split(".")[-1]
+        file_name = f"{uuid.uuid4()}.{file_extension}"
+        file_path = os.path.join(upload_dir, file_name)
+
+        with open(file_path, "wb") as buffer:
+            content = await photo_file.read()
+            buffer.write(content)
+
+        new_photo = Photo(photo=file_path)
+        db.add(new_photo)
+        await db.commit()
+        await db.refresh(new_photo)
+
+        product_photo = ProductPhoto(
+            product_id=new_product.id,
+            photo_id=new_photo.id
+        )
+        db.add(product_photo)
+    
+    await db.commit()
+    await db.refresh(product_photo)
     return new_product
 
 

@@ -1,10 +1,11 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import HTTPException
+from fastapi import HTTPException, UploadFile
 from sqlalchemy import select
 from app.api.products.product_crud import product_crud
+from typing import List
 
 
-async def bll_create_product(product_data: dict, db: AsyncSession): 
+async def bll_create_product(product_data: dict, photos: List[UploadFile], db: AsyncSession): 
     subsubcategory = await product_crud.dal_get_subsubcategory(product_data["product_subsubcategory_id"], db)
     if not subsubcategory:
         raise HTTPException(status_code=404, detail="SubSubCategory not found")
@@ -21,7 +22,7 @@ async def bll_create_product(product_data: dict, db: AsyncSession):
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
-    return await product_crud.dal_create_product(product_data, db)
+    return await product_crud.dal_create_product(product_data, photos, db)
 
 
 async def bll_get_products_by_user(user_id: int, db: AsyncSession):
