@@ -6,10 +6,10 @@ from jose import JWTError, jwt
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from core.config import settings
-from db.database import async_session_factory
 from model.models import User
 from util.context_utils import get_user_by_first_name, get_user_by_id
-
+from fastapi import Request, Depends
+from db.database import get_db
 
 
 def hash_password(plain_password: str) -> str:
@@ -55,3 +55,9 @@ async def get_user_by_token(access_token: str, db) -> User:
     if not user:
         raise HTTPException(status_code=401, detail="User not found")
     return user
+
+
+async def get_current_user_id(request: Request, db: AsyncSession = Depends(get_db)) -> int:
+    access_token = get_access_token(request)
+    user = await validate_token(access_token, db)
+    return user.id

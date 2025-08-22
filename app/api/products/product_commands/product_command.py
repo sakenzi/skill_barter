@@ -22,3 +22,10 @@ async def bll_create_product(product_data: dict, db: AsyncSession):
         raise HTTPException(status_code=404, detail="User not found")
     
     return await product_crud.dal_create_product(product_data, db)
+
+
+async def bll_get_products_by_user(user_id: int, db: AsyncSession):
+    products = await product_crud.dal_get_products_by_user(user_id, db)
+    if not products:
+        raise HTTPException(status_code=404, detail="No products found for this user")
+    return products
