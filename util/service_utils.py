@@ -44,7 +44,7 @@ def validate_token(access_token: str) -> str:
         sub = payload.get("sub")
         if sub is None:
             raise HTTPException(status_code=401, detail="Invalid token: 'sub' is missing")
-        return sub
+        return int(sub)
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid Token")
 
