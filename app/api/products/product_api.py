@@ -35,3 +35,12 @@ async def get_products_by_user(user_id: int = Depends(get_current_user_id), db: 
 )
 async def get_products(db: AsyncSession = Depends(get_db)):
     return await product_command.bll_get_products(db)
+
+
+@router.get(
+    "/{product_id}",
+    summary="Get product by id",
+    response_model=ProductResponse
+)
+async def get_product_by_id(product_id: int, db: AsyncSession = Depends(get_db)):
+    return await product_command.bll_get_product_by_id(product_id, db)

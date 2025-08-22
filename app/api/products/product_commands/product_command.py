@@ -36,3 +36,10 @@ async def bll_get_products(db: AsyncSession):
     if not products:
         raise HTTPException(status_code=404, detail="No products")
     return products
+
+
+async def bll_get_product_by_id(product_id: int, db: AsyncSession):
+    product = await product_crud.dal_get_product_by_id(product_id, db)
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    return product

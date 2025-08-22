@@ -54,3 +54,11 @@ async def dal_get_products(db: AsyncSession) -> list[Product]:
         select(Product)
     )
     return res.scalars().all()
+
+
+async def dal_get_product_by_id(product_id: int, db: AsyncSession) -> Product | None:
+    res = await db.execute(
+        select(Product).where(Product.id == product_id)
+    )
+    return res.scalar_one_or_none()
+    
