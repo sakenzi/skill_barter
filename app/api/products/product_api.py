@@ -11,7 +11,7 @@ from typing import List
 router = APIRouter()
 
 @router.post(
-    "/create",
+    "/",
     summary="Create product"
 )
 async def create_product(
@@ -47,7 +47,7 @@ async def get_products_by_user(user_id: int = Depends(get_current_user_id), db: 
 
 
 @router.get(
-    "/products",
+    "/",
     summary="Get all products",
     response_model=list[ProductResponse]
 )
