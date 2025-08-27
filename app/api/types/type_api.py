@@ -14,3 +14,12 @@ router = APIRouter()
 )
 async def create_product(type_name: str, db: AsyncSession = Depends(get_db)):
     return await type_command.bll_create_type_product(type_name=type_name, db=db)
+
+
+@router.get(
+    "/",
+    summary="Get all type products",
+    response_model=list[TypeResponse]
+)   
+async def get_all_type_product(db: AsyncSession = Depends(get_db)):
+    return await type_command.bll_get_all_type_product(db=db)
