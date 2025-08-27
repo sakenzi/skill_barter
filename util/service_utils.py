@@ -7,7 +7,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from core.config import settings
 from model.models import User
-from util.context_utils import get_user_by_first_name, get_user_by_id
+from util.context_utils import get_user_by_id
 from fastapi import Request, Depends
 from db.database import get_db
 
@@ -38,15 +38,28 @@ def get_access_token(request: Request) -> str:
     return parts[1]
 
 
-def validate_token(access_token: str) -> str:
+async def validate_token(access_token: str, db: AsyncSession) -> int:
     try:
-        payload = jwt.decode(access_token, settings.TOKEN_SECRET_KEY, algorithms=[settings.TOKEN_ALGORITHM])
+        payload = jwt.decode(
+            access_token,
+            settings.TOKEN_SECRET_KEY,
+            algorithms=[settings.TOKEN_ALGORITHM]
+        )
         sub = payload.get("sub")
         if sub is None:
             raise HTTPException(status_code=401, detail="Invalid token: 'sub' is missing")
-        return int(sub)
+        user_id = int(sub)
+
+        result = await db.execute(
+            select(User).where(User.id == user_id)
+        )
+        user = result.scalar_one_or_none()
+        if user is None:
+            raise HTTPException(status_code=401, detail="User not found")
+
+        return user_id
     except JWTError:
-        raise HTTPException(status_code=401, detail="Invalid Token")
+        raise HTTPException(status_code=401, detail="Invalid token")
 
 
 async def get_user_by_token(access_token: str, db) -> User:
@@ -60,4 +73,4 @@ async def get_user_by_token(access_token: str, db) -> User:
 async def get_current_user_id(request: Request, db: AsyncSession = Depends(get_db)) -> int:
     access_token = get_access_token(request)
     user = await validate_token(access_token, db)
-    return user.id
+    return user

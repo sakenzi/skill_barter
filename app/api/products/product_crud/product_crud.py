@@ -8,7 +8,11 @@ import os
 import uuid
 
 
-async def dal_create_product(product_data: dict, photos: List[UploadFile], db: AsyncSession) -> Product:
+async def dal_create_product(
+    product_data: dict,
+    photos: List[UploadFile],
+    db: AsyncSession
+) -> Product:
     new_product = Product(
         product_name=product_data["product_name"],
         description=product_data["description"],
@@ -20,35 +24,37 @@ async def dal_create_product(product_data: dict, photos: List[UploadFile], db: A
         created_at=datetime.utcnow(),
         updated_at=datetime.utcnow()
     )
+
     db.add(new_product)
-    await db.commit()
-    await db.refresh(new_product)
+    await db.flush()  
 
     upload_dir = "uploads"
     os.makedirs(upload_dir, exist_ok=True)
+
+    product_photos = []
 
     for photo_file in photos:
         file_extension = photo_file.filename.split(".")[-1]
         file_name = f"{uuid.uuid4()}.{file_extension}"
         file_path = os.path.join(upload_dir, file_name)
 
+        content = await photo_file.read()
         with open(file_path, "wb") as buffer:
-            content = await photo_file.read()
             buffer.write(content)
 
         new_photo = Photo(photo=file_path)
         db.add(new_photo)
-        await db.commit()
-        await db.refresh(new_photo)
+        await db.flush()  
 
-        product_photo = ProductPhoto(
+        product_photos.append(ProductPhoto(
             product_id=new_product.id,
             photo_id=new_photo.id
-        )
-        db.add(product_photo)
-    
+        ))
+
+    db.add_all(product_photos)
     await db.commit()
-    await db.refresh(product_photo)
+    await db.refresh(new_product)
+
     return new_product
 
 
