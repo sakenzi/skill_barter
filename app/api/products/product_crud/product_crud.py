@@ -1,6 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from model.models import Product, ProductSubSubCategory, TypeProduct, User, Photo, ProductPhoto
 from sqlalchemy import select
+from sqlalchemy.orm import joinedload
 from datetime import datetime
 from typing import List
 from fastapi import UploadFile
@@ -81,20 +82,43 @@ async def dal_get_user(user_id: int, db: AsyncSession) -> User | None:
 
 async def dal_get_products_by_user(user_id: int, db: AsyncSession) -> list[Product]:
     res = await db.execute(
-        select(Product).where(Product.user_id == user_id))
-    return res.scalars().all()
+        select(Product)
+        .where(Product.user_id == user_id)
+        .options(
+            joinedload(Product.product_photos).joinedload(ProductPhoto.photo),
+            joinedload(Product.type_product),
+            joinedload(Product.subsubcategory),
+            joinedload(Product.exchange_item_subsubcategory),
+            joinedload(Product.user).joinedload(User.user_email)
+        )
+    )
+    return res.unique().scalars().all()
 
 
 async def dal_get_products(db: AsyncSession) -> list[Product]:
     res = await db.execute(
         select(Product)
+        .options(
+            joinedload(Product.product_photos).joinedload(ProductPhoto.photo),
+            joinedload(Product.type_product),
+            joinedload(Product.subsubcategory),
+            joinedload(Product.exchange_item_subsubcategory),
+            joinedload(Product.user).joinedload(User.user_email)
+        )
     )
-    return res.scalars().all()
+    return res.unique().scalars().all()
 
 
 async def dal_get_product_by_id(product_id: int, db: AsyncSession) -> Product | None:
     res = await db.execute(
-        select(Product).where(Product.id == product_id)
+        select(Product)
+        .where(Product.id == product_id)
+        .options(
+            joinedload(Product.product_photos).joinedload(ProductPhoto.photo),
+            joinedload(Product.type_product),
+            joinedload(Product.subsubcategory),
+            joinedload(Product.exchange_item_subsubcategory),
+            joinedload(Product.user).joinedload(User.user_email)
+        )
     )
-    return res.scalar_one_or_none()
-    
+    return res.unique().scalar_one_or_none()
