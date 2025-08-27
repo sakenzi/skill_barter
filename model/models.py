@@ -81,8 +81,10 @@ class ProductSubSubCategory(Base):
     subcategory_id = Column(Integer, ForeignKey("product_subcategories.id"), nullable=False)
 
     subcategory = relationship("ProductSubCategory", back_populates="subsubcategories")
-    products = relationship("Product", back_populates="subsubcategory")
-    exchange_products = relationship("Product", back_populates="exchange_item_subsubcategory")  
+
+    products = relationship("Product",foreign_keys="Product.product_subsubcategory_id",back_populates="subsubcategory")
+
+    exchange_products = relationship("Product",foreign_keys="Product.exchange_item_subsubcategory_id",back_populates="exchange_item_subsubcategory")
 
 
 class Product(Base):
