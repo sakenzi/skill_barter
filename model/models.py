@@ -127,6 +127,7 @@ class RelatedProduct(Base):
     id = Column(Integer, primary_key=True, index=True)
     product_id_1 = Column(Integer, ForeignKey("products.id", ondelete="CASCADE"), nullable=False)
     product_id_2 = Column(Integer, ForeignKey("products.id", ondelete="CASCADE"), nullable=False)
+    created_at = Column(DateTime, default=lambda: datetime.utcnow())
 
     product_1 = relationship("Product", foreign_keys=[product_id_1], back_populates="related_products_1")
     product_2 = relationship("Product", foreign_keys=[product_id_2], back_populates="related_products_2")
@@ -136,3 +137,5 @@ class RelatedProduct(Base):
         Index('ix_related_products_product_ids', 'product_id_1', 'product_id_2'),
         CheckConstraint('product_id_1 != product_id_2', name='ck_different_products')
     )
+
+
