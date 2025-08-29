@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, String, Integer, DateTime, Column, ForeignKey, Text, Index, UniqueConstraint
+from sqlalchemy import Boolean, String, Integer, DateTime, Column, ForeignKey, Text, Index, UniqueConstraint, CheckConstraint
 from datetime import datetime
 from sqlalchemy.orm import relationship
 from db.database import Base
@@ -106,6 +106,8 @@ class Product(Base):
     type_product = relationship("TypeProduct", back_populates="products")
     user = relationship("User", back_populates="products")
     product_photos = relationship("ProductPhoto", back_populates="product")  
+    related_products_1 = relationship("RelatedProduct", foreign_keys="RelatedProduct.product_id_1", back_populates="product_1")
+    related_products_2 = relationship("RelatedProduct", foreign_keys="RelatedProduct.product_id_2", back_populates="product_2")
 
 
 class ProductPhoto(Base):
@@ -117,3 +119,20 @@ class ProductPhoto(Base):
 
     product = relationship("Product", back_populates="product_photos")
     photo = relationship("Photo", back_populates="product_photos")
+
+
+class RelatedProduct(Base):
+    __tablename__ = "related_products"
+
+    id = Column(Integer, primary_key=True, index=True)
+    product_id_1 = Column(Integer, ForeignKey("products.id", ondelete="CASCADE"), nullable=False)
+    product_id_2 = Column(Integer, ForeignKey("products.id", ondelete="CASCADE"), nullable=False)
+
+    product_1 = relationship("Product", foreign_keys=[product_id_1], back_populates="related_products_1")
+    product_2 = relationship("Product", foreign_keys=[product_id_2], back_populates="related_products_2")
+
+    __table_args__ = (
+        UniqueConstraint('product_id_1', 'product_id_2', name='uq_related_products'),
+        Index('ix_related_products_product_ids', 'product_id_1', 'product_id_2'),
+        CheckConstraint('product_id_1 != product_id_2', name='ck_different_products')
+    )
