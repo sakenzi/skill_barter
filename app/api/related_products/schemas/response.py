@@ -12,3 +12,4 @@ class AllRelatedProductResponse(BaseModel):
 
     class Config:
         from_attributes=True
+

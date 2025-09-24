@@ -12,7 +12,7 @@ router = APIRouter()
 
 @router.post(
     "/",
-    summary="Create product"
+    summary="Создать продукт"
 )
 async def create_product(
     product_name: str = Form(...),
@@ -39,7 +39,7 @@ async def create_product(
 
 @router.get(
     "/my_products",
-    summary="Get all products of current user",
+    summary="Получить все продукты текущего пользователя",
     response_model=list[ProductResponse]
 )
 async def get_products_by_user(user_id: int = Depends(get_current_user_id), db: AsyncSession = Depends(get_db)):
@@ -48,7 +48,7 @@ async def get_products_by_user(user_id: int = Depends(get_current_user_id), db: 
 
 @router.get(
     "/",
-    summary="Get all products",
+    summary="Получить все продукты",
     response_model=list[ProductResponse]
 )
 async def get_products(db: AsyncSession = Depends(get_db)):
@@ -57,7 +57,7 @@ async def get_products(db: AsyncSession = Depends(get_db)):
 
 @router.get(
     "/{product_id}",
-    summary="Get product by id",
+    summary="Получить продукт по id",
     response_model=ProductResponse
 )
 async def get_product_by_id(product_id: int, db: AsyncSession = Depends(get_db)):

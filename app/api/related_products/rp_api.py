@@ -9,7 +9,7 @@ router = APIRouter()
 
 @router.get(
     "/",
-    summary="get all related products",
+    summary="получить все сопутствующие товары",
     response_model=list[AllRelatedProductResponse]
 )
 async def get_all_related_products(db: AsyncSession = Depends(get_db)):

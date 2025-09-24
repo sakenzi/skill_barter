@@ -137,5 +137,3 @@ class RelatedProduct(Base):
         Index('ix_related_products_product_ids', 'product_id_1', 'product_id_2'),
         CheckConstraint('product_id_1 != product_id_2', name='ck_different_products')
     )
-
-

@@ -9,7 +9,7 @@ router = APIRouter()
 
 @router.post(
     "/",
-    summary="Create type product",
+    summary="Создать тип продукта",
     response_model=TypeResponse
 )
 async def create_product(type_name: str, db: AsyncSession = Depends(get_db)):
@@ -18,7 +18,7 @@ async def create_product(type_name: str, db: AsyncSession = Depends(get_db)):
 
 @router.get(
     "/",
-    summary="Get all type products",
+    summary="Получите все типы продуктов",
     response_model=list[TypeResponse]
 )   
 async def get_all_type_product(db: AsyncSession = Depends(get_db)):
